@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sanguine Health — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg:#0f1218;--bg2:#161c28;--bg3:#1c2333;
+      --gold:#d4a843;--gold-lt:#f0c96a;--gold-dim:rgba(212,168,67,0.18);
+      --text:#f0ece2;--text2:#c8c4bc;--muted:#8a8880;
+      --border:rgba(212,168,67,0.22);--border2:rgba(212,168,67,0.10);
+      --red:#c0392b;
+      --serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;
+    }
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;min-height:100vh;}
+
+    /* LOGIN */
+    #loginGate{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
+    .login-box{background:var(--bg2);border:1px solid var(--border);padding:3rem;width:100%;max-width:420px;text-align:center;}
+    .sh-mark{width:48px;height:48px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.2rem;font-weight:600;color:#0a0d14;margin:0 auto 1rem;}
+    .login-title{font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--gold-lt);margin-bottom:0.3rem;}
+    .login-title span{font-weight:300;color:var(--muted);}
+    .login-sub{font-size:0.75rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2.5rem;}
+    .login-box input{width:100%;background:var(--bg);border:1px solid rgba(138,136,128,0.2);color:var(--text);padding:0.9rem 1.2rem;font-family:var(--sans);font-size:0.95rem;outline:none;transition:border-color 0.25s;margin-bottom:1rem;text-align:center;letter-spacing:0.1em;}
+    .login-box input:focus{border-color:var(--gold);}
+    .login-box input::placeholder{color:rgba(138,136,128,0.4);}
+    .btn{background:var(--gold);color:#0a0d14;padding:0.85rem 2rem;font-family:var(--sans);font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:none;cursor:pointer;width:100%;transition:background 0.2s;}
+    .btn:hover{background:var(--gold-lt);}
+    .btn.danger{background:transparent;border:1px solid var(--red);color:var(--red);width:auto;padding:0.45rem 0.9rem;font-size:0.7rem;}
+    .btn.danger:hover{background:var(--red);color:#fff;}
+    .btn.secondary{background:transparent;border:1px solid var(--border);color:var(--muted);width:auto;padding:0.45rem 1.1rem;font-size:0.75rem;}
+    .btn.secondary:hover{border-color:var(--gold);color:var(--gold-lt);}
+    .btn.save{background:var(--gold);color:#0a0d14;width:auto;padding:0.7rem 2rem;}
+    .btn.small{width:auto;padding:0.6rem 1.5rem;font-size:0.78rem;}
+    .login-error{color:var(--red);font-size:0.82rem;margin-top:0.8rem;display:none;}
+    .login-loading{color:var(--gold);font-size:0.82rem;margin-top:0.8rem;display:none;}
+
+    /* APP */
+    #adminApp{display:none;}
+    header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 3%;height:60px;display:flex;align-items:center;justify-content:space-between;}
+    .header-left{display:flex;align-items:center;gap:0.8rem;}
+    .header-sh{width:34px;height:34px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:0.9rem;font-weight:600;color:#0a0d14;}
+    .header-logo{font-family:var(--serif);font-size:1.2rem;font-weight:600;color:var(--gold-lt);}
+    .header-logo span{font-weight:300;color:var(--muted);}
+    .header-right{display:flex;align-items:center;gap:1rem;}
+    .admin-badge{font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;background:var(--gold-dim);border:1px solid var(--border);color:var(--gold);padding:0.22rem 0.7rem;}
+
+    /* TABS */
+    .tab-bar{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;background:var(--bg2);}
+    .tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:1rem 1.8rem;font-family:var(--sans);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;}
+    .tab-btn:hover{color:var(--text2);background:rgba(212,168,67,0.03);}
+    .tab-btn.active{color:var(--gold-lt);border-bottom-color:var(--gold);background:rgba(212,168,67,0.04);}
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    main{padding:2.5rem 3%;max-width:1200px;margin:0 auto;}
+    .page-title{font-family:var(--serif);font-size:1.9rem;font-weight:300;margin-bottom:0.3rem;}
+    .page-title em{font-style:italic;color:var(--gold-lt);}
+    .page-sub{color:var(--muted);font-size:0.86rem;margin-bottom:2rem;}
+
+    .top-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.8rem;}
+    .search-bar{background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:0.55rem 1.1rem;font-family:var(--sans);font-size:0.85rem;outline:none;width:260px;transition:border-color 0.25s;}
+    .search-bar:focus{border-color:var(--gold);}
+    .search-bar::placeholder{color:rgba(138,136,128,0.4);}
+
+    .setup-banner{background:rgba(212,168,67,0.07);border:1px solid var(--gold-dim);padding:1.4rem 1.8rem;margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+    .setup-banner p{font-size:0.86rem;color:var(--muted);}
+    .setup-banner strong{color:var(--gold-lt);}
+
+    /* TABLE */
+    .data-table{width:100%;border-collapse:collapse;}
+    .data-table th{font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);padding:0.75rem 0.9rem;text-align:left;border-bottom:1px solid var(--border);background:var(--bg2);}
+    .data-table td{padding:1rem 0.9rem;border-bottom:1px solid rgba(212,168,67,0.07);font-size:0.86rem;vertical-align:top;}
+    .data-table tr:hover td{background:rgba(212,168,67,0.025);}
+    .td-name{font-family:var(--serif);font-size:1.05rem;font-weight:400;}
+    .tag-pill{display:inline-block;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:0.12rem 0.55rem;background:var(--gold-dim);}
+    .td-desc{color:var(--muted);max-width:260px;line-height:1.6;}
+    .td-actions{display:flex;gap:0.5rem;flex-wrap:wrap;}
+    .empty-state{text-align:center;padding:3.5rem;color:var(--muted);font-size:0.88rem;}
+
+    /* EDITOR PANELS */
+    .editor-panel{background:var(--bg2);border:1px solid var(--border);padding:2.2rem;}
+    .editor-panel h3{font-family:var(--serif);font-size:1.45rem;font-weight:300;margin-bottom:0.35rem;}
+    .editor-panel h3 em{font-style:italic;color:var(--gold-lt);}
+    .editor-sub{color:var(--muted);font-size:0.83rem;margin-bottom:1.8rem;}
+    .editor-section{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:1.5rem;}
+    .editor-section-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem;}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;}
+
+    /* FORM */
+    .form-group{margin-bottom:1.1rem;}
+    .form-group label{font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.35rem;}
+    .form-group input,.form-group select,.form-group textarea{width:100%;background:var(--bg);border:1px solid rgba(138,136,128,0.2);color:var(--text);padding:0.75rem 0.9rem;font-family:var(--sans);font-size:0.88rem;font-weight:300;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(138,136,128,0.4);}
+    .form-group textarea{resize:vertical;min-height:80px;}
+    .form-group select option{background:var(--bg2);}
+    .field-hint{font-size:0.7rem;color:var(--muted);margin-top:0.3rem;line-height:1.6;}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;align-items:center;justify-content:center;padding:2rem;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--bg2);border:1px solid var(--border);padding:2.2rem;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;position:relative;}
+    .modal h2{font-family:var(--serif);font-size:1.7rem;font-weight:300;margin-bottom:0.3rem;}
+    .modal h2 em{font-style:italic;color:var(--gold-lt);}
+    .modal-sub{color:var(--muted);font-size:0.8rem;margin-bottom:1.8rem;}
+    .modal-close{position:absolute;top:1.1rem;right:1.3rem;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;transition:color 0.2s;}
+    .modal-close:hover{color:var(--text);}
+    .modal-section{font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 1rem;padding-top:1.3rem;border-top:1px solid var(--border);}
+    .modal-actions{display:flex;gap:1rem;align-items:center;margin-top:1.6rem;flex-wrap:wrap;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--bg2);border:1px solid var(--gold-dim);color:var(--gold-lt);padding:0.9rem 1.6rem;font-size:0.83rem;z-index:500;opacity:0;transform:translateY(12px);transition:all 0.3s;pointer-events:none;}
+    .toast.show{opacity:1;transform:translateY(0);}
+    .toast.error{border-color:rgba(192,57,43,0.4);color:#e74c3c;}
+
+    @media(max-width:700px){
+      .grid-2{grid-template-columns:1fr;}
+      .data-table thead{display:none;}
+      .data-table tr{display:block;margin-bottom:1.2rem;border:1px solid var(--border);padding:0.8rem;}
+      .data-table td{display:block;padding:0.35rem 0;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginGate">
+  <div class="login-box">
+    <div class="sh-mark">SH</div>
+    <div class="login-title">Sanguine <span>Health</span></div>
+    <div class="login-sub">Admin Panel</div>
+    <input type="password" id="passwordInput" placeholder="Enter admin password" autocomplete="current-password"/>
+    <button class="btn" onclick="attemptLogin()">Enter →</button>
+    <p class="login-error" id="loginError">Incorrect password. Please try again.</p>
+    <p class="login-loading" id="loginLoading">Verifying...</p>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <header>
+    <div class="header-left">
+      <div class="header-sh">SH</div>
+      <div class="header-logo">Sanguine <span>Health</span></div>
+    </div>
+    <div class="header-right">
+      <span class="admin-badge">Admin</span>
+      <a href="/" class="btn secondary">← Back to Site</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-title">Sanguine <em>Admin</em></div>
+    <p class="page-sub">Manage your database, affiliates, booking section, and site content.</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('compounds',this)">Compounds</button>
+      <button class="tab-btn" onclick="switchTab('affiliates',this)">Affiliates</button>
+      <button class="tab-btn" onclick="switchTab('booking',this)">Booking Section</button>
+    </div>
+
+    <!-- ── COMPOUNDS TAB ── -->
+    <div class="tab-panel active" id="tab-compounds">
+      <div id="setupBanner" class="setup-banner" style="display:none;">
+        <p><strong>First time setup:</strong> Initialize the database to create tables and seed starter data.</p>
+        <button class="btn small" onclick="setupDatabase()">Initialize Database →</button>
+      </div>
+      <div class="top-bar">
+        <input class="search-bar" id="adminSearch" type="text" placeholder="Search compounds..." oninput="filterCompounds()"/>
+        <button class="btn small" onclick="openCompoundModal()">+ Add Compound</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Category</th><th>Description</th><th>Half-life</th><th>Route</th><th>Ref</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="compoundTableBody">
+          <tr><td colspan="7"><div class="empty-state">Loading...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── AFFILIATES TAB ── -->
+    <div class="tab-panel" id="tab-affiliates">
+      <div class="top-bar">
+        <p style="font-size:0.86rem;color:var(--muted);">Add affiliate links to drive traffic and earn commissions. All active affiliates appear on the public site.</p>
+        <button class="btn small" onclick="openAffiliateModal()">+ Add Affiliate</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Category</th><th>Description</th><th>Code</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="affiliateTableBody">
+          <tr><td colspan="6"><div class="empty-state">Loading...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── BOOKING TAB ── -->
+    <div class="tab-panel" id="tab-booking">
+      <div class="editor-panel">
+        <h3>Booking Section <em>Editor</em></h3>
+        <p class="editor-sub">Edit the booking section content and your Calendly link. Changes go live on save.</p>
+        <div class="form-group"><label>Section Title</label><input type="text" id="be_title" placeholder="Ready to get started?"/></div>
+        <div class="form-group"><label>Description</label><textarea id="be_description" placeholder="Brief description under the title..."></textarea></div>
+        <div class="grid-2">
+          <div class="form-group"><label>Button Label</label><input type="text" id="be_cta_label" placeholder="View Availability & Book →"/></div>
+          <div class="form-group"><label>Booking URL (Calendly etc.)</label><input type="text" id="be_cta_url" placeholder="https://calendly.com/your-link"/></div>
+        </div>
+        <div class="editor-section">
+          <div class="editor-section-title">Step 1</div>
+          <div class="grid-2">
+            <div class="form-group"><label>Title</label><input type="text" id="be_s1t" placeholder="Choose your session type"/></div>
+            <div class="form-group"><label>Description</label><input type="text" id="be_s1d" placeholder="Initial assessment, specialty session..."/></div>
+          </div>
+        </div>
+        <div class="editor-section">
+          <div class="editor-section-title">Step 2</div>
+          <div class="grid-2">
+            <div class="form-group"><label>Title</label><input type="text" id="be_s2t" placeholder="Pick your time"/></div>
+            <div class="form-group"><label>Description</label><input type="text" id="be_s2d" placeholder="Select from available slots..."/></div>
+          </div>
+        </div>
+        <div class="editor-section">
+          <div class="editor-section-title">Step 3</div>
+          <div class="grid-2">
+            <div class="form-group"><label>Title</label><input type="text" id="be_s3t" placeholder="Complete intake form"/></div>
+            <div class="form-group"><label>Description</label><input type="text" id="be_s3d" placeholder="A short pre-session questionnaire..."/></div>
+          </div>
+        </div>
+        <button class="btn save" onclick="saveBooking()" style="margin-top:1.4rem;">Save Booking Section →</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- COMPOUND MODAL -->
+<div class="modal-overlay" id="compoundModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('compoundModal')">✕</button>
+    <h2 id="compoundModalTitle">Add <em>Compound</em></h2>
+    <p class="modal-sub">Fill in the details. Required fields marked *.</p>
+    <div class="form-group"><label>Name *</label><input type="text" id="c_name" placeholder="e.g. BPC-157"/></div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="c_category">
+          <option value="" disabled selected>Select</option>
+          <option value="Peptide">Peptide</option>
+          <option value="Nootropic">Nootropic</option>
+          <option value="Metabolic">Metabolic</option>
+          <option value="Hormone">Hormone</option>
+          <option value="Supplement">Supplement</option>
+          <option value="Research Chem">Research Chem</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Tag / Use Case *</label><input type="text" id="c_tag" placeholder="e.g. Recovery, Cognitive"/></div>
+    </div>
+    <div class="form-group"><label>Description *</label><textarea id="c_desc" placeholder="Plain-English overview of the compound..."></textarea></div>
+    <div class="grid-2">
+      <div class="form-group"><label>Half-Life</label><input type="text" id="c_halflife" placeholder="~4 hours"/></div>
+      <div class="form-group"><label>Route</label><input type="text" id="c_route" placeholder="SubQ, Oral, Intranasal"/></div>
+    </div>
+    <div class="modal-section">References &amp; Glossary</div>
+    <div class="form-group">
+      <label>Quick Glossary Terms</label>
+      <input type="text" id="c_glossary" placeholder="Term 1 · Term 2 · Term 3"/>
+      <p class="field-hint">Separate terms with the · character. These appear as pills on compound cards.</p>
+    </div>
+    <div class="form-group">
+      <label>Research PDF URL</label>
+      <input type="text" id="c_pdf" placeholder="https://drive.google.com/file/..."/>
+      <p class="field-hint">Upload to Google Drive, Dropbox, or OneDrive and paste the shareable link here.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn small" onclick="saveCompound()">Save Compound →</button>
+      <button class="btn secondary" onclick="closeModal('compoundModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- AFFILIATE MODAL -->
+<div class="modal-overlay" id="affiliateModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('affiliateModal')">✕</button>
+    <h2 id="affiliateModalTitle">Add <em>Affiliate</em></h2>
+    <p class="modal-sub">Add a partner site or product. Active affiliates appear publicly on the site.</p>
+    <div class="form-group"><label>Brand / Product Name *</label><input type="text" id="a_name" placeholder="e.g. Peptide Sciences"/></div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Category</label>
+        <select id="a_category">
+          <option value="" disabled selected>Select</option>
+          <option value="Peptides">Peptides</option>
+          <option value="Lab Testing">Lab Testing</option>
+          <option value="Supplements">Supplements</option>
+          <option value="Compounding">Compounding</option>
+          <option value="Equipment">Equipment</option>
+          <option value="Education">Education</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Affiliate Code</label><input type="text" id="a_code" placeholder="SANGUINE10"/></div>
+    </div>
+    <div class="form-group"><label>Description *</label><textarea id="a_desc" placeholder="Brief description of what they offer and why you recommend them..."></textarea></div>
+    <div class="form-group"><label>Website URL *</label><input type="text" id="a_url" placeholder="https://example.com/?ref=sanguine"/></div>
+    <div class="grid-2">
+      <div class="form-group"><label>Display Order</label><input type="number" id="a_order" placeholder="0" min="0"/></div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="a_active">
+          <option value="true">Active — show publicly</option>
+          <option value="false">Inactive — hide</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn small" onclick="saveAffiliate()">Save Affiliate →</button>
+      <button class="btn secondary" onclick="closeModal('affiliateModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let adminPassword='', compounds=[], affiliates=[], editingCompound=null, editingAffiliate=null;
+
+/* ── LOGIN ── */
+document.getElementById('passwordInput').addEventListener('keydown',e=>{if(e.key==='Enter')attemptLogin();});
+
+async function attemptLogin(){
+  const pw=document.getElementById('passwordInput').value.trim();
+  if(!pw) return;
+  document.getElementById('loginError').style.display='none';
+  document.getElementById('loginLoading').style.display='block';
+  try {
+    const res=await fetch('/api/auth-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+    document.getElementById('loginLoading').style.display='none';
+    if(res.ok){
+      adminPassword=pw;
+      document.getElementById('loginGate').style.display='none';
+      document.getElementById('adminApp').style.display='block';
+      loadCompounds(); loadAffiliates(); loadBookingEditor();
+    } else { document.getElementById('loginError').style.display='block'; }
+  } catch {
+    document.getElementById('loginLoading').style.display='none';
+    document.getElementById('loginError').textContent='Connection error. Try again.';
+    document.getElementById('loginError').style.display='block';
+  }
+}
+
+/* ── TABS ── */
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+/* ── SETUP DB ── */
+async function setupDatabase(){
+  showToast('Initializing...');
+  try {
+    const res=await fetch('/api/setup-db');
+    if(res.ok){ showToast('Database initialized!'); document.getElementById('setupBanner').style.display='none'; setTimeout(loadCompounds,600); }
+    else showToast('Setup failed.',true);
+  } catch { showToast('Setup failed.',true); }
+}
+
+/* ══ COMPOUNDS ══ */
+async function loadCompounds(){
+  try {
+    const res=await fetch('/api/compounds'); if(!res.ok) throw new Error();
+    compounds=await res.json();
+    if(compounds.length===0) document.getElementById('setupBanner').style.display='flex';
+    renderCompoundTable(compounds);
+  } catch {
+    document.getElementById('setupBanner').style.display='flex';
+    document.getElementById('compoundTableBody').innerHTML='<tr><td colspan="7"><div class="empty-state">No compounds — initialize the database first.</div></td></tr>';
+  }
+}
+
+function renderCompoundTable(data){
+  const tbody=document.getElementById('compoundTableBody');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state">No compounds found.</div></td></tr>';return;}
+  tbody.innerHTML=data.map(c=>`
+    <tr>
+      <td class="td-name">${c.name}</td>
+      <td><span class="tag-pill">${c.category||''}</span><br><span style="font-size:0.75rem;color:var(--muted);display:block;margin-top:0.25rem;">${c.tag||''}</span></td>
+      <td class="td-desc">${(c.description||'').substring(0,90)}${(c.description||'').length>90?'…':''}</td>
+      <td style="color:var(--muted);font-size:0.82rem;">${c.half_life||'—'}</td>
+      <td style="color:var(--muted);font-size:0.82rem;">${c.route||'—'}</td>
+      <td>${c.pdf_url?'<span style="color:var(--gold);font-size:0.78rem;">✓ PDF</span>':'<span style="color:var(--muted);font-size:0.78rem;">—</span>'}</td>
+      <td><div class="td-actions">
+        <button class="btn secondary" onclick="openCompoundModal(${c.id})">Edit</button>
+        <button class="btn danger" onclick="deleteCompound(${c.id},'${c.name.replace(/'/g,"\\'")}')">Del</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function filterCompounds(){
+  const q=document.getElementById('adminSearch').value.toLowerCase();
+  renderCompoundTable(compounds.filter(c=>c.name.toLowerCase().includes(q)||(c.description&&c.description.toLowerCase().includes(q))||(c.tag&&c.tag.toLowerCase().includes(q))));
+}
+
+function openCompoundModal(id=null){
+  editingCompound=id;
+  if(id){
+    const c=compounds.find(x=>x.id===id);
+    document.getElementById('compoundModalTitle').innerHTML='Edit <em>Compound</em>';
+    document.getElementById('c_name').value=c.name||'';
+    document.getElementById('c_category').value=c.category||'';
+    document.getElementById('c_tag').value=c.tag||'';
+    document.getElementById('c_desc').value=c.description||'';
+    document.getElementById('c_halflife').value=c.half_life||'';
+    document.getElementById('c_route').value=c.route||'';
+    document.getElementById('c_glossary').value=c.glossary||'';
+    document.getElementById('c_pdf').value=c.pdf_url||'';
+  } else {
+    document.getElementById('compoundModalTitle').innerHTML='Add <em>Compound</em>';
+    ['c_name','c_tag','c_desc','c_halflife','c_route','c_glossary','c_pdf'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('c_category').value='';
+  }
+  document.getElementById('compoundModal').classList.add('open');
+}
+
+async function saveCompound(){
+  const name=document.getElementById('c_name').value.trim();
+  const category=document.getElementById('c_category').value;
+  const tag=document.getElementById('c_tag').value.trim();
+  const description=document.getElementById('c_desc').value.trim();
+  if(!name||!category||!tag||!description){showToast('Fill in all required fields.',true);return;}
+  const payload={password:adminPassword,name,category,tag,description,
+    half_life:document.getElementById('c_halflife').value.trim(),
+    route:document.getElementById('c_route').value.trim(),
+    glossary:document.getElementById('c_glossary').value.trim(),
+    pdf_url:document.getElementById('c_pdf').value.trim()};
+  if(editingCompound) payload.id=editingCompound;
+  try {
+    const res=await fetch('/api/save-compound',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!res.ok){showToast('Auth failed.',true);return;}
+    showToast(editingCompound?'Compound updated!':'Compound added! Live now.');
+    closeModal('compoundModal'); loadCompounds();
+  } catch {showToast('Something went wrong.',true);}
+}
+
+async function deleteCompound(id,name){
+  if(!confirm(`Delete "${name}"? Cannot be undone.`)) return;
+  try {
+    const res=await fetch('/api/delete-compound',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,id})});
+    if(!res.ok){showToast('Auth failed.',true);return;}
+    showToast(`"${name}" deleted.`); loadCompounds();
+  } catch {showToast('Error.',true);}
+}
+
+/* ══ AFFILIATES ══ */
+async function loadAffiliates(){
+  try {
+    const res=await fetch('/api/affiliates'); if(!res.ok) throw new Error();
+    // load all including inactive for admin
+    const res2=await fetch('/api/affiliates');
+    affiliates=await res2.json();
+    renderAffiliateTable(affiliates);
+  } catch {
+    document.getElementById('affiliateTableBody').innerHTML='<tr><td colspan="6"><div class="empty-state">No affiliates yet.</div></td></tr>';
+  }
+}
+
+function renderAffiliateTable(data){
+  const tbody=document.getElementById('affiliateTableBody');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty-state">No affiliates yet. Add your first partner!</div></td></tr>';return;}
+  tbody.innerHTML=data.map(a=>`
+    <tr>
+      <td class="td-name">${a.name}</td>
+      <td><span class="tag-pill">${a.category||''}</span></td>
+      <td class="td-desc">${(a.description||'').substring(0,90)}${(a.description||'').length>90?'…':''}</td>
+      <td style="color:var(--gold);font-size:0.82rem;font-weight:400;">${a.code||'—'}</td>
+      <td><span style="font-size:0.75rem;color:${a.active?'#27ae60':'var(--muted)'};">${a.active?'● Active':'○ Hidden'}</span></td>
+      <td><div class="td-actions">
+        <button class="btn secondary" onclick="openAffiliateModal(${a.id})">Edit</button>
+        <button class="btn danger" onclick="deleteAffiliate(${a.id},'${a.name.replace(/'/g,"\\'")}')">Del</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function openAffiliateModal(id=null){
+  editingAffiliate=id;
+  if(id){
+    const a=affiliates.find(x=>x.id===id);
+    document.getElementById('affiliateModalTitle').innerHTML='Edit <em>Affiliate</em>';
+    document.getElementById('a_name').value=a.name||'';
+    document.getElementById('a_category').value=a.category||'';
+    document.getElementById('a_code').value=a.code||'';
+    document.getElementById('a_desc').value=a.description||'';
+    document.getElementById('a_url').value=a.url||'';
+    document.getElementById('a_order').value=a.sort_order||0;
+    document.getElementById('a_active').value=a.active?'true':'false';
+  } else {
+    document.getElementById('affiliateModalTitle').innerHTML='Add <em>Affiliate</em>';
+    ['a_name','a_code','a_desc','a_url'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('a_category').value='';
+    document.getElementById('a_order').value='0';
+    document.getElementById('a_active').value='true';
+  }
+  document.getElementById('affiliateModal').classList.add('open');
+}
+
+async function saveAffiliate(){
+  const name=document.getElementById('a_name').value.trim();
+  const description=document.getElementById('a_desc').value.trim();
+  const url=document.getElementById('a_url').value.trim();
+  if(!name||!description||!url){showToast('Name, description, and URL required.',true);return;}
+  const payload={password:adminPassword,name,description,url,
+    code:document.getElementById('a_code').value.trim(),
+    category:document.getElementById('a_category').value,
+    logo_url:'',
+    active:document.getElementById('a_active').value==='true',
+    sort_order:parseInt(document.getElementById('a_order').value)||0};
+  if(editingAffiliate) payload.id=editingAffiliate;
+  try {
+    const res=await fetch('/api/affiliates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!res.ok){showToast('Auth failed.',true);return;}
+    showToast(editingAffiliate?'Affiliate updated!':'Affiliate added! Live now.');
+    closeModal('affiliateModal'); loadAffiliates();
+  } catch {showToast('Something went wrong.',true);}
+}
+
+async function deleteAffiliate(id,name){
+  if(!confirm(`Delete "${name}"?`)) return;
+  try {
+    const res=await fetch('/api/affiliates',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,id})});
+    if(!res.ok){showToast('Auth failed.',true);return;}
+    showToast(`"${name}" deleted.`); loadAffiliates();
+  } catch {showToast('Error.',true);}
+}
+
+/* ══ BOOKING ══ */
+async function loadBookingEditor(){
+  try {
+    const res=await fetch('/api/booking'); const b=await res.json(); if(!b) return;
+    document.getElementById('be_title').value=b.title||'';
+    document.getElementById('be_description').value=b.description||'';
+    document.getElementById('be_cta_label').value=b.cta_label||'';
+    document.getElementById('be_cta_url').value=b.cta_url||'';
+    document.getElementById('be_s1t').value=b.step1_title||'';
+    document.getElementById('be_s1d').value=b.step1_text||'';
+    document.getElementById('be_s2t').value=b.step2_title||'';
+    document.getElementById('be_s2d').value=b.step2_text||'';
+    document.getElementById('be_s3t').value=b.step3_title||'';
+    document.getElementById('be_s3d').value=b.step3_text||'';
+  } catch {}
+}
+
+async function saveBooking(){
+  const payload={password:adminPassword,subtitle:'Schedule',
+    title:document.getElementById('be_title').value,
+    description:document.getElementById('be_description').value,
+    cta_label:document.getElementById('be_cta_label').value,
+    cta_url:document.getElementById('be_cta_url').value,
+    step1_title:document.getElementById('be_s1t').value, step1_text:document.getElementById('be_s1d').value,
+    step2_title:document.getElementById('be_s2t').value, step2_text:document.getElementById('be_s2d').value,
+    step3_title:document.getElementById('be_s3t').value, step3_text:document.getElementById('be_s3d').value};
+  try {
+    const res=await fetch('/api/booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!res.ok){showToast('Auth failed.',true);return;}
+    showToast('Booking section updated!');
+  } catch {showToast('Error.',true);}
+}
+
+/* ── UTILS ── */
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  editingCompound=null; editingAffiliate=null;
+}
+function showToast(msg,isError=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.toggle('error',isError);
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500);
+}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o) o.classList.remove('open');});
+});
+</script>
+</body>
+</html>
