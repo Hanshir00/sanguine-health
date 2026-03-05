@@ -1,7 +1,0 @@
-[build]
-  base      = "sanguine-health"
-  publish   = "sanguine-health"
-  functions = "sanguine-health/netlify/functions"
-
-[functions]
-  node_bundler = "esbuild"
