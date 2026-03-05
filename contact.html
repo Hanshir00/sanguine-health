@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — Sanguine Health</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+:root{
+  --bg:#0f1218;--bg2:#161c28;--bg3:#1c2333;--bg4:#222a3a;
+  --gold:#d4a843;--gold-lt:#f0c96a;--gold-dim:rgba(212,168,67,0.18);
+  --text:#f0ece2;--text2:#c8c4bc;--muted:#8a8880;
+  --border:rgba(212,168,67,0.22);--border2:rgba(212,168,67,0.10);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.7;overflow-x:hidden;min-height:100vh;}
+
+/* CANVAS */
+#bg-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;}
+.site-wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:62px;background:rgba(10,13,20,0.97);border-bottom:1px solid var(--border);box-shadow:0 2px 30px rgba(0,0,0,0.5);}
+.nav-home{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
+.sh-mark{width:42px;height:42px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.15rem;font-weight:600;color:#0a0d14;letter-spacing:0.02em;transition:background 0.2s,transform 0.15s;flex-shrink:0;}
+.sh-mark:hover{background:var(--gold-lt);transform:scale(1.05);}
+.nav-links{display:flex;gap:0;list-style:none;height:62px;}
+.nav-links a{display:flex;align-items:center;text-decoration:none;color:var(--muted);font-size:0.74rem;letter-spacing:0.12em;text-transform:uppercase;padding:0 1.3rem;height:100%;border-left:1px solid rgba(212,168,67,0.07);transition:color 0.2s,background 0.2s;position:relative;white-space:nowrap;}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transition:transform 0.2s;}
+.nav-links a:hover{color:var(--gold-lt);background:rgba(212,168,67,0.04);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-links a.active{color:var(--gold-lt);background:rgba(212,168,67,0.05);}
+.nav-links li:last-child a{border-right:1px solid rgba(212,168,67,0.07);}
+.nav-badge{font-size:0.5rem;letter-spacing:0.08em;text-transform:uppercase;background:rgba(212,168,67,0.2);color:var(--gold);padding:0.12rem 0.38rem;margin-left:0.4rem;vertical-align:middle;}
+.nav-cta{background:var(--gold);color:#0a0d14;padding:0.52rem 1.4rem;font-family:var(--sans);font-size:0.74rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:none;border:none;transition:background 0.2s,transform 0.15s;white-space:nowrap;margin-left:1.2rem;flex-shrink:0;}
+.nav-cta:hover{background:var(--gold-lt);transform:translateY(-1px);}
+
+/* PAGE WRAPPER */
+.page-body{flex:1;padding:100px 6% 6rem;}
+.page-body.centered{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 62px);text-align:center;padding-top:62px;}
+
+/* SECTION LABELS */
+.section-eyebrow{font-size:0.68rem;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:0.9rem;display:flex;align-items:center;gap:0.8rem;}
+.section-eyebrow::before{content:'';width:22px;height:1px;background:var(--gold);}
+.section-title{font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:300;line-height:1.15;margin-bottom:1.1rem;}
+.section-title em{font-style:italic;color:var(--gold-lt);}
+.section-sub{color:var(--text2);max-width:540px;font-size:0.94rem;line-height:1.9;}
+.divider{width:44px;height:1px;background:var(--gold);margin:1.8rem 0;opacity:0.7;}
+
+/* BUTTONS */
+.btn-primary{background:var(--gold);color:#0a0d14;padding:0.9rem 2.4rem;font-family:var(--sans);font-size:0.8rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;transition:background 0.2s,transform 0.15s;display:inline-block;}
+.btn-primary:hover{background:var(--gold-lt);transform:translateY(-2px);}
+.btn-secondary{background:transparent;color:var(--text);padding:0.9rem 2.4rem;font-family:var(--sans);font-size:0.8rem;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,236,226,0.28);cursor:pointer;transition:border-color 0.2s,color 0.2s;display:inline-block;}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold-lt);}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:2.2rem 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.2rem;position:relative;z-index:1;}
+.footer-left{display:flex;align-items:center;gap:0.65rem;}
+.sh-mark-sm{width:30px;height:30px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:0.82rem;font-weight:600;color:#0a0d14;}
+.footer-name{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-lt);}
+.footer-name span{font-weight:300;color:var(--muted);}
+footer nav{display:flex;gap:1.8rem;flex-wrap:wrap;}
+footer nav a{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+footer nav a:hover{color:var(--gold-lt);}
+.footer-copy{font-size:0.7rem;color:rgba(138,136,128,0.4);}
+
+/* DISCLAIMER */
+.disclaimer{background:var(--bg2);border-top:1px solid var(--border);padding:1.8rem 6%;position:relative;z-index:1;}
+.disclaimer p{font-size:0.72rem;color:var(--muted);line-height:1.8;max-width:900px;}
+.disclaimer strong{color:rgba(138,136,128,0.85);font-weight:500;}
+
+/* CANVAS SCRIPT (inline) */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:960px){.nav-links{display:none;}.page-body{padding:88px 5% 4rem;}}
+.contact-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:5rem;align-items:start;margin-top:2.5rem;}
+.contact-info h3{font-family:var(--serif);font-size:1.5rem;font-weight:300;margin-bottom:0.85rem;}
+.contact-info p{font-size:0.87rem;color:var(--text2);line-height:1.85;margin-bottom:1.8rem;}
+.contact-detail{display:flex;align-items:center;gap:0.9rem;margin-bottom:0.85rem;}
+.c-icon{width:32px;height:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--gold);flex-shrink:0;}
+.contact-detail span{font-size:0.84rem;color:var(--text2);}
+form{display:flex;flex-direction:column;gap:1rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+label{font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.32rem;}
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid rgba(138,136,128,0.2);color:var(--text);padding:0.8rem 1rem;font-family:var(--sans);font-size:0.87rem;font-weight:300;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+input::placeholder,textarea::placeholder{color:rgba(138,136,128,0.42);}
+select option{background:var(--bg2);}
+textarea{resize:vertical;min-height:120px;}
+.form-note{font-size:0.71rem;color:var(--muted);line-height:1.7;}
+.form-success{display:none;text-align:center;padding:2rem;border:1px solid var(--gold-dim);background:rgba(212,168,67,0.04);}
+.form-success p{color:var(--gold-lt);font-family:var(--serif);font-size:1.3rem;font-style:italic;}
+.form-error-msg{display:none;padding:0.8rem;border:1px solid rgba(192,57,43,0.3);background:rgba(192,57,43,0.05);color:#e74c3c;font-size:0.8rem;margin-top:0.5rem;}
+@media(max-width:760px){.contact-layout{grid-template-columns:1fr;gap:2.5rem;}.form-row{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="site-wrap">
+<nav>
+  <a href="/" class="nav-home"><div class="sh-mark">SH</div></a>
+  <ul class="nav-links">
+    <li><a href="/" data-page="home">Research</a></li>
+    <li><a href="/consulting.html" data-page="consulting">Consulting</a></li>
+    <li><a href="/b2b.html" data-page="b2b">For Clinics</a></li>
+    <li><a href="/affiliates.html" data-page="affiliates">Affiliates</a></li>
+    <li><a href="/calculator.html" data-page="calculator">Calculator <span class="nav-badge">Soon</span></a></li>
+    <li><a href="/contact.html" data-page="contact">Contact</a></li>
+  </ul>
+  <a href="/consulting.html" class="nav-cta">Book a Call</a>
+</nav>
+<div class="page-body">
+  <div class="section-eyebrow">Get in Touch</div>
+  <h1 class="section-title">Have questions?<br><em>Let's talk.</em></h1>
+  <div class="divider"></div>
+
+  <div class="contact-layout">
+    <div class="contact-info">
+      <h3>Not sure which service is right for you?</h3>
+      <p>Fill out the form and I'll personally respond within 24–48 hours.</p>
+      <div class="contact-detail"><div class="c-icon">✉</div><span>hello@sanguinehealth.com</span></div>
+      <div class="contact-detail"><div class="c-icon">🕐</div><span>Response within 24–48 hours</span></div>
+      <div class="contact-detail"><div class="c-icon">📍</div><span>Remote — serving clients nationwide</span></div>
+    </div>
+    <div>
+      <form id="contactForm" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div><label>First Name</label><input type="text" id="cf_fname" placeholder="Jane" required/></div>
+          <div><label>Last Name</label><input type="text" id="cf_lname" placeholder="Smith" required/></div>
+        </div>
+        <div><label>Email Address</label><input type="email" id="cf_email" placeholder="jane@example.com" required/></div>
+        <div>
+          <label>Inquiry Type</label>
+          <select id="cf_inquiry" required>
+            <option value="" disabled selected>Select an option</option>
+            <option>1-on-1 Consulting Session</option>
+            <option>Weight Loss &amp; Metabolic Optimization</option>
+            <option>Ongoing Coaching / Retainer</option>
+            <option>Clinic / Pharmacy Partnership (B2B)</option>
+            <option>Research Database Early Access</option>
+            <option>General Question</option>
+          </select>
+        </div>
+        <div><label>Tell me about your goals</label><textarea id="cf_message" placeholder="Share a bit about where you are and what you're hoping to achieve…"></textarea></div>
+        <div><label>How did you find Sanguine Health?</label><input type="text" id="cf_referral" placeholder="Reddit, referral, social media…"/></div>
+        <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+          <input type="checkbox" id="disclaimer" required style="width:auto;margin-top:0.15rem;flex-shrink:0;"/>
+          <label for="disclaimer" style="text-transform:none;letter-spacing:0;font-size:0.78rem;line-height:1.7;cursor:pointer;">I understand that Sanguine Health provides health education services and does not offer medical diagnosis, treatment, or prescription.</label>
+        </div>
+        <button type="submit" class="btn-primary" style="align-self:flex-start;" id="submitBtn">Send Message →</button>
+        <p class="form-note">Your information is kept private and never shared.</p>
+      </form>
+      <div class="form-success" id="formSuccess"><p>Message received — I'll be in touch within 48 hours.</p></div>
+      <div class="form-error-msg" id="formError">Something went wrong. Please email hello@sanguinehealth.com directly.</div>
+    </div>
+  </div>
+</div>
+<div class="disclaimer">
+  <p><strong>Educational Disclaimer:</strong> Sanguine Health provides general health education and research information only. Nothing on this website constitutes medical advice, diagnosis, or treatment. Always consult a qualified, licensed healthcare professional before beginning any new health protocol, supplement, or compound.</p>
+</div>
+<footer>
+  <div class="footer-left">
+    <a href="/" style="display:flex;align-items:center;gap:0.65rem;text-decoration:none;">
+      <div class="sh-mark-sm">SH</div>
+      <div class="footer-name">Sanguine <span>Health</span></div>
+    </a>
+  </div>
+  <nav>
+    <a href="/">Research</a>
+    <a href="/consulting.html">Consulting</a>
+    <a href="/b2b.html">For Clinics</a>
+    <a href="/affiliates.html">Affiliates</a>
+    <a href="/calculator.html">Calculator</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+  <p class="footer-copy">© 2025 Sanguine Health. All rights reserved.</p>
+</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let W,H,nodes=[];
+  const COUNT=42;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function init(){nodes=[];for(let i=0;i<COUNT;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.38,vy:(Math.random()-0.5)*0.38,r:Math.random()*2+0.8});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<175){ctx.beginPath();ctx.strokeStyle=`rgba(212,168,67,${(1-d/175)*0.26})`;ctx.lineWidth=0.65;ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.stroke();}}
+    nodes.forEach(n=>{ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle='rgba(212,168,67,0.52)';ctx.fill();n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;});
+    requestAnimationFrame(draw);
+  }
+  resize();init();draw();
+  window.addEventListener('resize',()=>{resize();init();});
+})();
+document.querySelector('.nav-links a[data-page="contact"]').classList.add('active');
+
+const EMAILJS_SERVICE_ID='YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID='YOUR_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY='YOUR_PUBLIC_KEY';
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+async function handleSubmit(e){
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  btn.textContent='Sending…';btn.disabled=true;
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
+      from_name:document.getElementById('cf_fname').value+' '+document.getElementById('cf_lname').value,
+      from_email:document.getElementById('cf_email').value,
+      inquiry:document.getElementById('cf_inquiry').value,
+      message:document.getElementById('cf_message').value,
+      referral:document.getElementById('cf_referral').value,
+    });
+    document.getElementById('contactForm').style.display='none';
+    document.getElementById('formSuccess').style.display='block';
+  }catch{
+    document.getElementById('formError').style.display='block';
+    btn.textContent='Send Message →';btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>

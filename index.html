@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sanguine Health — Your Health in Your Hands</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+:root{
+  --bg:#0f1218;--bg2:#161c28;--bg3:#1c2333;--bg4:#222a3a;
+  --gold:#d4a843;--gold-lt:#f0c96a;--gold-dim:rgba(212,168,67,0.18);
+  --text:#f0ece2;--text2:#c8c4bc;--muted:#8a8880;
+  --border:rgba(212,168,67,0.22);--border2:rgba(212,168,67,0.10);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.7;overflow-x:hidden;min-height:100vh;}
+
+/* CANVAS */
+#bg-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;}
+.site-wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:62px;background:rgba(10,13,20,0.97);border-bottom:1px solid var(--border);box-shadow:0 2px 30px rgba(0,0,0,0.5);}
+.nav-home{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
+.sh-mark{width:42px;height:42px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.15rem;font-weight:600;color:#0a0d14;letter-spacing:0.02em;transition:background 0.2s,transform 0.15s;flex-shrink:0;}
+.sh-mark:hover{background:var(--gold-lt);transform:scale(1.05);}
+.nav-links{display:flex;gap:0;list-style:none;height:62px;}
+.nav-links a{display:flex;align-items:center;text-decoration:none;color:var(--muted);font-size:0.74rem;letter-spacing:0.12em;text-transform:uppercase;padding:0 1.3rem;height:100%;border-left:1px solid rgba(212,168,67,0.07);transition:color 0.2s,background 0.2s;position:relative;white-space:nowrap;}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transition:transform 0.2s;}
+.nav-links a:hover{color:var(--gold-lt);background:rgba(212,168,67,0.04);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-links a.active{color:var(--gold-lt);background:rgba(212,168,67,0.05);}
+.nav-links li:last-child a{border-right:1px solid rgba(212,168,67,0.07);}
+.nav-badge{font-size:0.5rem;letter-spacing:0.08em;text-transform:uppercase;background:rgba(212,168,67,0.2);color:var(--gold);padding:0.12rem 0.38rem;margin-left:0.4rem;vertical-align:middle;}
+.nav-cta{background:var(--gold);color:#0a0d14;padding:0.52rem 1.4rem;font-family:var(--sans);font-size:0.74rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:none;border:none;transition:background 0.2s,transform 0.15s;white-space:nowrap;margin-left:1.2rem;flex-shrink:0;}
+.nav-cta:hover{background:var(--gold-lt);transform:translateY(-1px);}
+
+/* PAGE WRAPPER */
+.page-body{flex:1;padding:100px 6% 6rem;}
+.page-body.centered{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 62px);text-align:center;padding-top:62px;}
+
+/* SECTION LABELS */
+.section-eyebrow{font-size:0.68rem;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:0.9rem;display:flex;align-items:center;gap:0.8rem;}
+.section-eyebrow::before{content:'';width:22px;height:1px;background:var(--gold);}
+.section-title{font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:300;line-height:1.15;margin-bottom:1.1rem;}
+.section-title em{font-style:italic;color:var(--gold-lt);}
+.section-sub{color:var(--text2);max-width:540px;font-size:0.94rem;line-height:1.9;}
+.divider{width:44px;height:1px;background:var(--gold);margin:1.8rem 0;opacity:0.7;}
+
+/* BUTTONS */
+.btn-primary{background:var(--gold);color:#0a0d14;padding:0.9rem 2.4rem;font-family:var(--sans);font-size:0.8rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;transition:background 0.2s,transform 0.15s;display:inline-block;}
+.btn-primary:hover{background:var(--gold-lt);transform:translateY(-2px);}
+.btn-secondary{background:transparent;color:var(--text);padding:0.9rem 2.4rem;font-family:var(--sans);font-size:0.8rem;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,236,226,0.28);cursor:pointer;transition:border-color 0.2s,color 0.2s;display:inline-block;}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold-lt);}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:2.2rem 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.2rem;position:relative;z-index:1;}
+.footer-left{display:flex;align-items:center;gap:0.65rem;}
+.sh-mark-sm{width:30px;height:30px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:0.82rem;font-weight:600;color:#0a0d14;}
+.footer-name{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-lt);}
+.footer-name span{font-weight:300;color:var(--muted);}
+footer nav{display:flex;gap:1.8rem;flex-wrap:wrap;}
+footer nav a{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+footer nav a:hover{color:var(--gold-lt);}
+.footer-copy{font-size:0.7rem;color:rgba(138,136,128,0.4);}
+
+/* DISCLAIMER */
+.disclaimer{background:var(--bg2);border-top:1px solid var(--border);padding:1.8rem 6%;position:relative;z-index:1;}
+.disclaimer p{font-size:0.72rem;color:var(--muted);line-height:1.8;max-width:900px;}
+.disclaimer strong{color:rgba(138,136,128,0.85);font-weight:500;}
+
+/* CANVAS SCRIPT (inline) */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:960px){.nav-links{display:none;}.page-body{padding:88px 5% 4rem;}}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 6% 5rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 65% 45%,rgba(212,168,67,0.09) 0%,transparent 65%),radial-gradient(ellipse 40% 60% at 15% 75%,rgba(212,168,67,0.05) 0%,transparent 55%);pointer-events:none;}
+.hero-eyebrow{font-size:0.68rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);margin-bottom:1.8rem;display:flex;align-items:center;gap:0.9rem;opacity:0;animation:fadeUp 0.8s 0.15s forwards;}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--gold);}
+.hero h1{font-family:var(--serif);font-size:clamp(3.6rem,9vw,7.8rem);font-weight:300;line-height:1.06;max-width:840px;opacity:0;animation:fadeUp 0.9s 0.3s forwards;}
+.hero h1 em{font-style:italic;color:var(--gold-lt);}
+.hero-sub{max-width:480px;color:var(--text2);font-size:1rem;margin-top:1.9rem;line-height:1.88;opacity:0;animation:fadeUp 0.9s 0.5s forwards;}
+.hero-actions{display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:2.8rem;opacity:0;animation:fadeUp 0.9s 0.7s forwards;}
+.scroll-cue{position:absolute;bottom:2.5rem;left:6%;display:flex;align-items:center;gap:0.9rem;opacity:0;animation:fadeUp 1s 1.3s forwards;}
+.scroll-cue::before{content:'';width:1px;height:36px;background:linear-gradient(to bottom,var(--gold),transparent);}
+.scroll-cue span{font-size:0.64rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+
+/* ── STATS ── */
+.stats-strip{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.4rem 6%;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:2rem;position:relative;z-index:1;}
+.stat{text-align:center;}
+.stat-num{font-family:var(--serif);font-size:2.7rem;font-weight:300;color:var(--gold-lt);line-height:1;}
+.stat-label{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:0.35rem;}
+
+/* ── RESEARCH ── */
+.research{padding:5rem 6% 6rem;position:relative;z-index:1;}
+.filter-bar{display:flex;gap:0.5rem;flex-wrap:wrap;margin:1.6rem 0 1rem;}
+.filter-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--muted);padding:0.38rem 1rem;font-family:var(--sans);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.filter-btn:hover{border-color:var(--gold);color:var(--text);}
+.filter-btn.active{border-color:var(--gold);color:var(--gold-lt);background:var(--gold-dim);}
+.search-input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:0.52rem 1.1rem;font-family:var(--sans);font-size:0.84rem;font-weight:300;outline:none;width:230px;transition:border-color 0.2s;}
+.search-input:focus{border-color:var(--gold);}
+.search-input::placeholder{color:rgba(138,136,128,0.4);}
+.filter-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem;margin-bottom:1.5rem;}
+
+.compounds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.3rem;}
+.compound-card{border:1px solid var(--border2);padding:1.8rem;background:var(--bg2);transition:border-color 0.28s,transform 0.25s,box-shadow 0.28s;display:flex;flex-direction:column;}
+.compound-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 36px rgba(212,168,67,0.08);}
+.compound-tag{display:inline-block;font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:0.16rem 0.65rem;margin-bottom:0.85rem;background:var(--gold-dim);align-self:flex-start;}
+.compound-name{font-family:var(--serif);font-size:1.45rem;font-weight:400;margin-bottom:0.55rem;}
+.compound-desc{font-size:0.86rem;color:var(--text2);line-height:1.82;flex:1;}
+.compound-glossary{margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border2);}
+.glossary-label{font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:0.45rem;}
+.glossary-terms{display:flex;flex-wrap:wrap;gap:0.32rem;}
+.glossary-term{font-size:0.68rem;color:var(--text2);background:var(--bg3);border:1px solid var(--border2);padding:0.1rem 0.52rem;}
+.compound-ref{margin-top:0.85rem;}
+.ref-link{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold-dim);padding:0.3rem 0.8rem;transition:background 0.2s,color 0.2s;}
+.ref-link:hover{background:var(--gold);color:#0a0d14;}
+.loading-state{grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted);font-size:0.88rem;}
+.loading-dot{display:inline-block;width:5px;height:5px;background:var(--gold);border-radius:50%;margin:0 3px;animation:pulse 1.2s ease-in-out infinite;}
+.loading-dot:nth-child(2){animation-delay:0.2s;}.loading-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes pulse{0%,80%,100%{opacity:0.2;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="site-wrap">
+
+<nav>
+  <a href="/" class="nav-home"><div class="sh-mark">SH</div></a>
+  <ul class="nav-links">
+    <li><a href="/" data-page="home">Research</a></li>
+    <li><a href="/consulting.html" data-page="consulting">Consulting</a></li>
+    <li><a href="/b2b.html" data-page="b2b">For Clinics</a></li>
+    <li><a href="/affiliates.html" data-page="affiliates">Affiliates</a></li>
+    <li><a href="/calculator.html" data-page="calculator">Calculator <span class="nav-badge">Soon</span></a></li>
+    <li><a href="/contact.html" data-page="contact">Contact</a></li>
+  </ul>
+  <a href="/consulting.html" class="nav-cta">Book a Call</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-eyebrow">Health Education &amp; Optimization</div>
+  <h1>Your health<br>in your <em>hands.</em></h1>
+  <p class="hero-sub">Evidence-based guidance on peptides, research compounds, and metabolic health — empowering you with the knowledge to take control of your wellbeing.</p>
+  <div class="hero-actions">
+    <a href="/consulting.html" class="btn-primary">Book a Consultation</a>
+    <a href="#research" class="btn-secondary">Explore the Database</a>
+  </div>
+  <div class="scroll-cue"><span>Research Database Below</span></div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat"><div class="stat-num" id="compoundCount">—</div><div class="stat-label">Compounds Indexed</div></div>
+  <div class="stat"><div class="stat-num">1:1</div><div class="stat-label">Personalized Consulting</div></div>
+  <div class="stat"><div class="stat-num">B2B</div><div class="stat-label">Clinic Partnerships</div></div>
+  <div class="stat"><div class="stat-num" id="affiliateCount">—</div><div class="stat-label">Affiliate Partners</div></div>
+</div>
+
+<!-- RESEARCH -->
+<section class="research" id="research">
+  <div class="section-eyebrow">Research Database</div>
+  <h2 class="section-title">Science made <em>accessible.</em></h2>
+  <p class="section-sub">A curated, plain-English reference library covering peptides, nootropics, and research compounds — complete with glossaries and full research references.</p>
+  <div class="divider"></div>
+  <div class="filter-row">
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-tag="All">All</button>
+      <button class="filter-btn" data-tag="Recovery">Recovery</button>
+      <button class="filter-btn" data-tag="Cognitive">Cognitive</button>
+      <button class="filter-btn" data-tag="Metabolic">Metabolic</button>
+      <button class="filter-btn" data-tag="Fat Loss">Fat Loss</button>
+    </div>
+    <input class="search-input" id="searchInput" type="text" placeholder="Search compounds…"/>
+  </div>
+  <div class="compounds-grid" id="compoundsGrid">
+    <div class="loading-state"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Educational Disclaimer:</strong> Sanguine Health provides general health education and research information only. Nothing on this website constitutes medical advice, diagnosis, or treatment. Always consult a qualified, licensed healthcare professional before beginning any new health protocol, supplement, or compound.</p>
+</div>
+<footer>
+  <div class="footer-left">
+    <a href="/" style="display:flex;align-items:center;gap:0.65rem;text-decoration:none;">
+      <div class="sh-mark-sm">SH</div>
+      <div class="footer-name">Sanguine <span>Health</span></div>
+    </a>
+  </div>
+  <nav>
+    <a href="/">Research</a>
+    <a href="/consulting.html">Consulting</a>
+    <a href="/b2b.html">For Clinics</a>
+    <a href="/affiliates.html">Affiliates</a>
+    <a href="/calculator.html">Calculator</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+  <p class="footer-copy">© 2025 Sanguine Health. All rights reserved.</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let W,H,nodes=[];
+  const COUNT=42;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function init(){nodes=[];for(let i=0;i<COUNT;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.38,vy:(Math.random()-0.5)*0.38,r:Math.random()*2+0.8});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<175){ctx.beginPath();ctx.strokeStyle=`rgba(212,168,67,${(1-d/175)*0.26})`;ctx.lineWidth=0.65;ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.stroke();}}
+    nodes.forEach(n=>{ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle='rgba(212,168,67,0.52)';ctx.fill();n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;});
+    requestAnimationFrame(draw);
+  }
+  resize();init();draw();
+  window.addEventListener('resize',()=>{resize();init();});
+})();
+// active nav
+document.querySelector('.nav-links a[data-page="home"]').classList.add('active');
+
+// compounds
+let allCompounds=[],activeTag='All',searchQuery='';
+async function loadCompounds(){
+  try{
+    const res=await fetch('/api/compounds');if(!res.ok)throw new Error();
+    allCompounds=await res.json();
+    document.getElementById('compoundCount').textContent=allCompounds.length+'+';
+    renderCompounds();
+  }catch{document.getElementById('compoundsGrid').innerHTML='<div class="loading-state">Database loading — check back soon.</div>';}
+}
+async function loadAffiliateCount(){
+  try{const res=await fetch('/api/affiliates');const a=await res.json();document.getElementById('affiliateCount').textContent=a.length||'—';}catch{}
+}
+function renderCompounds(){
+  const grid=document.getElementById('compoundsGrid');
+  let f=allCompounds.filter(c=>{
+    const matchTag=activeTag==='All'||(c.tag&&c.tag.toLowerCase()===activeTag.toLowerCase());
+    const q=searchQuery;
+    const matchSearch=!q||c.name.toLowerCase().includes(q)||(c.description&&c.description.toLowerCase().includes(q))||(c.tag&&c.tag.toLowerCase().includes(q))||(c.glossary&&c.glossary.toLowerCase().includes(q));
+    return matchTag&&matchSearch;
+  });
+  if(!f.length){grid.innerHTML='<div class="loading-state">No compounds found.</div>';return;}
+  grid.innerHTML=f.map(c=>{
+    const gHTML=c.glossary?'<div class="compound-glossary"><div class="glossary-label">Quick Glossary</div><div class="glossary-terms">'+c.glossary.split('·').map(t=>t.trim()).filter(Boolean).map(t=>'<span class="glossary-term">'+t+'</span>').join('')+'</div></div>':'';
+    const rHTML=c.pdf_url?'<div class="compound-ref"><a class="ref-link" href="'+c.pdf_url+'" target="_blank" rel="noopener">📄 Full Research Reference</a></div>':'';
+    return '<div class="compound-card"><span class="compound-tag">'+(c.tag||'')+'</span><div class="compound-name">'+c.name+'</div><p class="compound-desc">'+(c.description||'')+'</p>'+gHTML+rHTML+'</div>';
+  }).join('');
+}
+document.getElementById('filterBar').addEventListener('click',e=>{
+  if(!e.target.matches('.filter-btn'))return;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');activeTag=e.target.dataset.tag;renderCompounds();
+});
+document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=e.target.value.toLowerCase();renderCompounds();});
+loadCompounds();loadAffiliateCount();
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Affiliates — Sanguine Health</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+:root{
+  --bg:#0f1218;--bg2:#161c28;--bg3:#1c2333;--bg4:#222a3a;
+  --gold:#d4a843;--gold-lt:#f0c96a;--gold-dim:rgba(212,168,67,0.18);
+  --text:#f0ece2;--text2:#c8c4bc;--muted:#8a8880;
+  --border:rgba(212,168,67,0.22);--border2:rgba(212,168,67,0.10);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.7;overflow-x:hidden;min-height:100vh;}
+
+/* CANVAS */
+#bg-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;}
+.site-wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:62px;background:rgba(10,13,20,0.97);border-bottom:1px solid var(--border);box-shadow:0 2px 30px rgba(0,0,0,0.5);}
+.nav-home{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
+.sh-mark{width:42px;height:42px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.15rem;font-weight:600;color:#0a0d14;letter-spacing:0.02em;transition:background 0.2s,transform 0.15s;flex-shrink:0;}
+.sh-mark:hover{background:var(--gold-lt);transform:scale(1.05);}
+.nav-links{display:flex;gap:0;list-style:none;height:62px;}
+.nav-links a{display:flex;align-items:center;text-decoration:none;color:var(--muted);font-size:0.74rem;letter-spacing:0.12em;text-transform:uppercase;padding:0 1.3rem;height:100%;border-left:1px solid rgba(212,168,67,0.07);transition:color 0.2s,background 0.2s;position:relative;white-space:nowrap;}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transition:transform 0.2s;}
+.nav-links a:hover{color:var(--gold-lt);background:rgba(212,168,67,0.04);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-links a.active{color:var(--gold-lt);background:rgba(212,168,67,0.05);}
+.nav-links li:last-child a{border-right:1px solid rgba(212,168,67,0.07);}
+.nav-badge{font-size:0.5rem;letter-spacing:0.08em;text-transform:uppercase;background:rgba(212,168,67,0.2);color:var(--gold);padding:0.12rem 0.38rem;margin-left:0.4rem;vertical-align:middle;}
+.nav-cta{background:var(--gold);color:#0a0d14;padding:0.52rem 1.4rem;font-family:var(--sans);font-size:0.74rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:none;border:none;transition:background 0.2s,transform 0.15s;white-space:nowrap;margin-left:1.2rem;flex-shrink:0;}
+.nav-cta:hover{background:var(--gold-lt);transform:translateY(-1px);}
+
+/* PAGE WRAPPER */
+.page-body{flex:1;padding:100px 6% 6rem;}
+.page-body.centered{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 62px);text-align:center;padding-top:62px;}
+
+/* SECTION LABELS */
+.section-eyebrow{font-size:0.68rem;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:0.9rem;display:flex;align-items:center;gap:0.8rem;}
+.section-eyebrow::before{content:'';width:22px;height:1px;background:var(--gold);}
+.section-title{font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:300;line-height:1.15;margin-bottom:1.1rem;}
+.section-title em{font-style:italic;color:var(--gold-lt);}
+.section-sub{color:var(--text2);max-width:540px;font-size:0.94rem;line-height:1.9;}
+.divider{width:44px;height:1px;background:var(--gold);margin:1.8rem 0;opacity:0.7;}
+
+/* BUTTONS */
+.btn-primary{background:var(--gold);color:#0a0d14;padding:0.9rem 2.4rem;font-family:var(--sans);font-size:0.8rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;transition:background 0.2s,transform 0.15s;display:inline-block;}
+.btn-primary:hover{background:var(--gold-lt);transform:translateY(-2px);}
+.btn-secondary{background:transparent;color:var(--text);padding:0.9rem 2.4rem;font-family:var(--sans);font-size:0.8rem;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,236,226,0.28);cursor:pointer;transition:border-color 0.2s,color 0.2s;display:inline-block;}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold-lt);}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:2.2rem 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.2rem;position:relative;z-index:1;}
+.footer-left{display:flex;align-items:center;gap:0.65rem;}
+.sh-mark-sm{width:30px;height:30px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:0.82rem;font-weight:600;color:#0a0d14;}
+.footer-name{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-lt);}
+.footer-name span{font-weight:300;color:var(--muted);}
+footer nav{display:flex;gap:1.8rem;flex-wrap:wrap;}
+footer nav a{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+footer nav a:hover{color:var(--gold-lt);}
+.footer-copy{font-size:0.7rem;color:rgba(138,136,128,0.4);}
+
+/* DISCLAIMER */
+.disclaimer{background:var(--bg2);border-top:1px solid var(--border);padding:1.8rem 6%;position:relative;z-index:1;}
+.disclaimer p{font-size:0.72rem;color:var(--muted);line-height:1.8;max-width:900px;}
+.disclaimer strong{color:rgba(138,136,128,0.85);font-weight:500;}
+
+/* CANVAS SCRIPT (inline) */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:960px){.nav-links{display:none;}.page-body{padding:88px 5% 4rem;}}
+.affiliates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.4rem;margin-top:2.5rem;}
+.affiliate-card{border:1px solid var(--border2);padding:2rem;background:var(--bg2);transition:border-color 0.26s,transform 0.24s,box-shadow 0.26s;display:flex;flex-direction:column;gap:0.75rem;}
+.affiliate-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 36px rgba(212,168,67,0.08);}
+.affiliate-cat{display:inline-block;font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:0.15rem 0.62rem;background:var(--gold-dim);align-self:flex-start;}
+.affiliate-name{font-family:var(--serif);font-size:1.4rem;font-weight:400;}
+.affiliate-desc{font-size:0.85rem;color:var(--text2);line-height:1.8;flex:1;}
+.affiliate-code{font-size:0.74rem;letter-spacing:0.1em;color:var(--gold-lt);background:var(--bg3);border:1px solid var(--border2);padding:0.32rem 0.75rem;align-self:flex-start;}
+.affiliate-link{display:inline-flex;align-items:center;gap:0.45rem;font-size:0.73rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:#0a0d14;text-decoration:none;padding:0.52rem 1.3rem;transition:background 0.2s;align-self:flex-start;margin-top:0.2rem;}
+.affiliate-link:hover{background:var(--gold-lt);}
+.empty-state{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:var(--muted);font-size:0.9rem;line-height:1.9;}
+.loading-dot{display:inline-block;width:5px;height:5px;background:var(--gold);border-radius:50%;margin:0 3px;animation:pulse 1.2s ease-in-out infinite;}
+.loading-dot:nth-child(2){animation-delay:0.2s;}.loading-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes pulse{0%,80%,100%{opacity:0.2;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="site-wrap">
+<nav>
+  <a href="/" class="nav-home"><div class="sh-mark">SH</div></a>
+  <ul class="nav-links">
+    <li><a href="/" data-page="home">Research</a></li>
+    <li><a href="/consulting.html" data-page="consulting">Consulting</a></li>
+    <li><a href="/b2b.html" data-page="b2b">For Clinics</a></li>
+    <li><a href="/affiliates.html" data-page="affiliates">Affiliates</a></li>
+    <li><a href="/calculator.html" data-page="calculator">Calculator <span class="nav-badge">Soon</span></a></li>
+    <li><a href="/contact.html" data-page="contact">Contact</a></li>
+  </ul>
+  <a href="/consulting.html" class="nav-cta">Book a Call</a>
+</nav>
+<div class="page-body">
+  <div class="section-eyebrow">Affiliate Partners</div>
+  <h1 class="section-title">Trusted <em>resources</em><br>&amp; partners.</h1>
+  <p class="section-sub">Products, labs, and services I personally use and recommend. Affiliate codes where available — using them supports Sanguine Health at no extra cost to you.</p>
+  <div class="divider"></div>
+  <div class="affiliates-grid" id="affiliatesGrid">
+    <div class="empty-state"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>
+  </div>
+</div>
+<div class="disclaimer">
+  <p><strong>Educational Disclaimer:</strong> Sanguine Health provides general health education and research information only. Nothing on this website constitutes medical advice, diagnosis, or treatment. Always consult a qualified, licensed healthcare professional before beginning any new health protocol, supplement, or compound.</p>
+</div>
+<footer>
+  <div class="footer-left">
+    <a href="/" style="display:flex;align-items:center;gap:0.65rem;text-decoration:none;">
+      <div class="sh-mark-sm">SH</div>
+      <div class="footer-name">Sanguine <span>Health</span></div>
+    </a>
+  </div>
+  <nav>
+    <a href="/">Research</a>
+    <a href="/consulting.html">Consulting</a>
+    <a href="/b2b.html">For Clinics</a>
+    <a href="/affiliates.html">Affiliates</a>
+    <a href="/calculator.html">Calculator</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+  <p class="footer-copy">© 2025 Sanguine Health. All rights reserved.</p>
+</footer>
+</div>
+<script>
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let W,H,nodes=[];
+  const COUNT=42;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function init(){nodes=[];for(let i=0;i<COUNT;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.38,vy:(Math.random()-0.5)*0.38,r:Math.random()*2+0.8});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<175){ctx.beginPath();ctx.strokeStyle=`rgba(212,168,67,${(1-d/175)*0.26})`;ctx.lineWidth=0.65;ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.stroke();}}
+    nodes.forEach(n=>{ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle='rgba(212,168,67,0.52)';ctx.fill();n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;});
+    requestAnimationFrame(draw);
+  }
+  resize();init();draw();
+  window.addEventListener('resize',()=>{resize();init();});
+})();
+document.querySelector('.nav-links a[data-page="affiliates"]').classList.add('active');
+async function loadAffiliates(){
+  try{
+    const res=await fetch('/api/affiliates');if(!res.ok)throw new Error();
+    const a=await res.json();
+    const grid=document.getElementById('affiliatesGrid');
+    if(!a.length){grid.innerHTML='<div class="empty-state">Affiliate partners coming soon.<br>Check back for curated recommendations.</div>';return;}
+    grid.innerHTML=a.map(x=>'<div class="affiliate-card">'+(x.category?'<span class="affiliate-cat">'+x.category+'</span>':'')+'<div class="affiliate-name">'+x.name+'</div><p class="affiliate-desc">'+(x.description||'')+'</p>'+(x.code?'<div class="affiliate-code">Code: '+x.code+'</div>':'')+(x.url?'<a class="affiliate-link" href="'+x.url+'" target="_blank" rel="noopener">Visit Site →</a>':'')+'</div>').join('');
+  }catch{document.getElementById('affiliatesGrid').innerHTML='<div class="empty-state">Could not load affiliates.</div>';}
+}
+loadAffiliates();
+</script>
+</body>
+</html>
