@@ -1,14 +1,6 @@
 import { neon } from '@netlify/neon';
 
 export default async (req) => {
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  const url = new URL(req.url);
-  const password = url.searchParams.get('password');
-
-  if (!adminPassword || password !== adminPassword) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-  }
-
   const sql = neon();
 
   await sql`
