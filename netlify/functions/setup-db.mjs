@@ -1,7 +1,7 @@
-import { neon } from '@netlify/neon';
+import { neon } from '@neondatabase/serverless';
 
 export default async (req) => {
-  const sql = neon();
+  const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
   await sql`
     CREATE TABLE IF NOT EXISTS compounds (
@@ -20,21 +20,15 @@ export default async (req) => {
   if (parseInt(result[0].count) === 0) {
     await sql`
       INSERT INTO compounds (name, category, tag, description, half_life, route) VALUES
-      (
-        'BPC-157', 'Peptide', 'Recovery',
+      ('BPC-157', 'Peptide', 'Recovery',
         'Body protection compound derived from gastric juice. Studied extensively for accelerated tendon, ligament, and gut healing. One of the most researched peptides in the longevity space.',
-        '~4 hours', 'SubQ / Oral'
-      ),
-      (
-        'Semaglutide / GLP-1', 'Peptide', 'Metabolic',
+        '~4 hours', 'SubQ / Oral'),
+      ('Semaglutide / GLP-1', 'Peptide', 'Metabolic',
         'GLP-1 receptor agonist with powerful effects on satiety, insulin sensitivity, and metabolic function. At the forefront of modern weight management research.',
-        '~7 days', 'SubQ'
-      ),
-      (
-        'Semax', 'Nootropic', 'Cognitive',
+        '~7 days', 'SubQ'),
+      ('Semax', 'Nootropic', 'Cognitive',
         'Synthetic peptide analogue of ACTH with neuroprotective and cognitive-enhancing properties. Popular among researchers studying focus, neurogenesis, and mood regulation.',
-        '~20 min', 'Intranasal'
-      )
+        '~20 min', 'Intranasal')
     `;
   }
 
