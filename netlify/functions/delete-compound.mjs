@@ -1,4 +1,4 @@
-import { neon } from '@netlify/neon';
+import { neon } from '@neondatabase/serverless';
 
 export default async (req) => {
   const adminPassword = process.env.ADMIN_PASSWORD;
@@ -8,12 +8,11 @@ export default async (req) => {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
-  const sql = neon();
+  const sql = neon(process.env.NETLIFY_DATABASE_URL);
   await sql`DELETE FROM compounds WHERE id = ${body.id}`;
 
   return new Response(JSON.stringify({ message: 'Compound deleted.' }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
+    status: 200, headers: { 'Content-Type': 'application/json' }
   });
 };
 
