@@ -222,25 +222,13 @@
     if (e.key === 'Enter') attemptLogin();
   });
 
-  async function attemptLogin() {
+async function attemptLogin() {
     const pw = document.getElementById('passwordInput').value.trim();
     if (!pw) return;
-    // Test the password against the API
-    try {
-      const res = await fetch('/api/compounds');
-      if (res.ok) {
-        adminPassword = pw;
-        document.getElementById('loginGate').style.display = 'none';
-        document.getElementById('adminApp').style.display = 'block';
-        loadCompounds();
-      }
-    } catch {
-      // Still allow login, we'll verify on save
-      adminPassword = pw;
-      document.getElementById('loginGate').style.display = 'none';
-      document.getElementById('adminApp').style.display = 'block';
-      loadCompounds();
-    }
+    adminPassword = pw;
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    loadCompounds();
   }
 
   // ── LOAD ──
